@@ -4,6 +4,7 @@ Library           RPA.PDF
 Library           RPA.HTTP
 Library           RPA.Tables
 Library           RPA.FileSystem
+Library           RPA.Archive
 
 *** Variables ***
 ${URL}            https://robotsparebinindustries.com/#/robot-order
@@ -34,6 +35,8 @@ Fill the form
     ${body}=  Set Variable  ${order}[Body]
     ${legs}=  Set Variable  ${order}[Legs]
     ${address}=  Set Variable  ${order}[Address]
+    WAIT UNTIL ELEMENT IS VISIBLE    xpath://input[@type='radio' and @name='body' and @value='${body}']
+    WAIT UNTIL ELEMENT IS VISIBLE    xpath://*[@type='number' and @placeholder='Enter the part number for the legs']
     Select From List By Value  id:head  ${head}
     Click Element  xpath://input[@type='radio' and @name='body' and @value='${body}']
     Input Text  xpath://*[@type='number' and @placeholder='Enter the part number for the legs']  ${legs}
@@ -64,8 +67,8 @@ Embed the robot screenshot to the receipt PDF file
     Log To Console  \nTemporary HTML file removed.
 
 Create ZIP Archive of Receipt PDF Files
-    ${pdf_files}=  Get File Names In Directory  ${OUTPUT_DIR}${/}receipts
-    Create ZIP Archive  ${ZIP_FILE_PATH}  ${pdf_files}
+    ${pdf_files}=  Get File Name  ${OUTPUT_DIR}${/}receipts
+    Archive Folder With ZIP  ${ZIP_FILE_PATH}  ${pdf_files}
 
 *** Tasks ***
 Automate Robot Orders
@@ -80,5 +83,4 @@ Automate Robot Orders
         Embed the robot screenshot to the receipt PDF file  ${screenshot}  ${pdf}
         Go to order another robot
     END
-     Create ZIP Archive of Receipt PDF Files
-
+    Create ZIP Archive of Receipt PDF Files
